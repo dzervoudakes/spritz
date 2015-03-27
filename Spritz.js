@@ -9,27 +9,27 @@
  * https://github.com/DanZiti/Spritz/blob/master/LICENSE
  *
  * WIP:
- * -newDoc size must be dynamically generated, not hard-coded
+ * -Currently working on placement on newly duplicated layers in newDoc
+ * -newDoc size must be dynamically generated, not hard-coded (and must export with even width and height values for retina)
  * -Must find a better way to shift between the documents (rather than specifying documents[0] and documents[1]
- * -Troubles with exportDocument() within "exportSprite()" function
  */
 	
-	// Collect open documents and prepare to export as JPG...
+	// The end result of this script will be a PNG image exported in the user's Desktop directory...
 	//
-	var openDoc = app.activeDocument;
-	var spriteGroup = app.activeDocument.layerSets.getByName("SPRITE").layers; // Gather all layers within the "SPRITE" group
-	var exportPNG = new ExportOptionsSaveForWeb();
-		exportPNG.format = SaveDocumentType.PNG;
-		exportPNG.includeProfile = false;
-		exportPNG.interlaced = true;
-		exportPNG.optimized = false;
-		exportPNG.quality = 100;
+	var spriteGroup = app.activeDocument.layerSets.getByName("SPRITE").layers;
+	var saveFile = new File("~/Desktop/SPRITE.png");
+	var exportPNG = new PNGSaveOptions();
+		exportPNG.compression = 9;
+		exportPNG.interlaced = false;
 	
-	// Saves SPRITE.png in the same directory as the open file
+	// Saves SPRITE.png in the user's desktop directory: to be called in "buildSprite()" below
 	//
 	function exportSprite() {
+		
 		app.activeDocument = app.documents[1]; // WILL WORK ON THIS (see WIP notes)
-		//app.activeDocument.exportDocument("./SPRITE.png", ExportType.SAVEFORWEB, exportPNG);
+		
+		app.activeDocument.saveAs(saveFile, exportPNG, true);
+		app.activeDocument.close(SaveOptions.DONOTSAVECHANGES);
 	};
 	
 	// Collect all groups designated with the "SPRITE" label
