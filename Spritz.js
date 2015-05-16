@@ -10,16 +10,12 @@
  * 
  * NOTE: This script only exports simple sprite sheets and does not provide the
  * coordinates of each element within the sprite. To find specific sprite coordinates
- * for use within your stylesheets, I kindly suggest www.spritecow.com - it's just awesome.
- * 
- * //////////////////////////////////////////////////////////////////////////////////////////////
- * 
- * WIP:
- * - Must find a better way to shift between the documents (rather than specifying documents[0] and documents[1], try something with indexOf() or other method)
+ * for use within your style sheets, I kindly suggest www.spritecow.com - it's just awesome.
  */
 	
 	// The end result of this script will be a png image exported in the user's Desktop directory...
 	//
+	var initialDoc = app.activeDocument;
 	var spriteGroup = app.activeDocument.layerSets.getByName("SPRITE").layers;
 	var saveFile = new File("~/Desktop/SPRITE.png");
 	var exportPNG = new PNGSaveOptions();
@@ -39,7 +35,7 @@
 	//
 	function revertHistory() {
 		
-		app.activeDocument = app.documents[0]; // WILL WORK ON THIS (see WIP notes)
+		app.activeDocument = initialDoc;
 		
 		var latestHistory = app.activeDocument.historyStates.length;
 		var revertTo = latestHistory - (historyState + 1);
@@ -71,18 +67,16 @@
 			
 			historyState++;
 			
-			app.activeDocument = app.documents[0]; // WILL WORK ON THIS (see WIP notes)
+			app.activeDocument = initialDoc;
 			app.activeLayer = layers[j];
 			
-			// Only the first layer is pushed to the top-left of the new document...
+			// Only the first layer is pushed to the top-left of the new document, the rest fall in line behind it
 			//
 			if (!translateLeft) {
 				app.activeLayer.translate(-app.activeLayer.bounds[0], -app.activeLayer.bounds[1]);
 				translateLeft = true;
 			}
 			
-			// ...and the rest fall in line behind it
-			//
 			else {
 				app.activeLayer.translate(-app.activeLayer.bounds[0] + layers[j - 1].bounds[2], -app.activeLayer.bounds[1]);
 			}
@@ -90,7 +84,7 @@
 			var newLayer = app.activeLayer.duplicate(newDoc, ElementPlacement.PLACEATEND);
 		}
 		
-		app.activeDocument = app.documents[1]; // WILL WORK ON THIS (see WIP notes)
+		app.activeDocument = documents[documents.length - 1]; // newDoc created above
 		
 		// Resize canvas to only cover the width/height necessary for the sprite
 		//
