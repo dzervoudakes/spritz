@@ -2,20 +2,23 @@
  * Spritz
  * https://github.com/DanZiti/Spritz
  * 
- * Generates sprite sheets from Photoshop groups/layers
+ * Generates sprite sheets from Photoshop layers
  * 
  * Copyright (c) 2015 Dan Zervoudakes
  * Released under the MIT license
  * https://github.com/DanZiti/Spritz/blob/master/LICENSE
- *
+ * 
+ * NOTE: This script only exports simple sprite sheets and does not provide the
+ * coordinates of each element within the sprite. To find specific sprite coordinates
+ * for use within your stylesheets, I kindly suggest www.spritecow.com - it's just awesome.
+ * 
+ * //////////////////////////////////////////////////////////////////////////////////////////////
+ * 
  * WIP:
- * -Currently working on placement on newly duplicated layers in newDoc (first layer is correct, all the rest... not to much...)
- * -newDoc size must be dynamically generated, not hard-coded (and must export with even width and height values for retina)
- * -Must find a better way to shift between the documents (rather than specifying documents[0] and documents[1], try something with indexOf())
- * -If possible, export x/y coordinates of each SPRITE layer in a XML file - will be worked on at the tail-end
+ * - Must find a better way to shift between the documents (rather than specifying documents[0] and documents[1], try something with indexOf() or other method)
  */
 	
-	// The end result of this script will be a PNG image exported in the user's Desktop directory...
+	// The end result of this script will be a png image exported in the user's Desktop directory...
 	//
 	var spriteGroup = app.activeDocument.layerSets.getByName("SPRITE").layers;
 	var saveFile = new File("~/Desktop/SPRITE.png");
@@ -25,12 +28,9 @@
 	
 	var historyState = 0;
 	
-	// Saves SPRITE.png in the user's desktop directory: to be called in "buildSprite()" below...
+	// Export SPRITE.png in the user's desktop directory...
 	//
 	function exportSprite() {
-		
-		app.activeDocument = app.documents[1]; // WILL WORK ON THIS (see WIP notes)
-		
 		app.activeDocument.saveAs(saveFile, exportPNG, true);
 		app.activeDocument.close(SaveOptions.DONOTSAVECHANGES);
 	};
@@ -56,6 +56,8 @@
 		//
 		var newDoc = app.documents.add(UnitValue(800, "px"), UnitValue(600, "px"), 72, "SPRITE", NewDocumentMode.RGB, DocumentFill.TRANSPARENT);
 		var layers = [];
+		var translateLeft = false;
+		var newDocHeight = 0;
 		
 		// Add each sprite layer to the array
 		//
@@ -72,23 +74,49 @@
 			app.activeDocument = app.documents[0]; // WILL WORK ON THIS (see WIP notes)
 			app.activeLayer = layers[j];
 			
-			// Only the first layer is pushed to the top-left of the new document
+			// Only the first layer is pushed to the top-left of the new document...
 			//
-			if (j === 0) {
+			if (!translateLeft) {
 				app.activeLayer.translate(-app.activeLayer.bounds[0], -app.activeLayer.bounds[1]);
+				translateLeft = true;
 			}
 			
+			// ...and the rest fall in line behind it
+			//
 			else {
-				app.activeLayer.translate(-layers[j - 1].bounds[2], -layers[j].bounds[1]); // TRANSLATE vs. MOVE(), etc.???!!!
+				app.activeLayer.translate(-app.activeLayer.bounds[0] + layers[j - 1].bounds[2], -app.activeLayer.bounds[1]);
 			}
 			
 			var newLayer = app.activeLayer.duplicate(newDoc, ElementPlacement.PLACEATEND);
 		}
 		
+		app.activeDocument = app.documents[1]; // WILL WORK ON THIS (see WIP notes)
+		
+		// Resize canvas to only cover the width/height necessary for the sprite
+		//
+		for (var k = 0; k < layers.length; k++) {
+			if (layers[k].bounds[3] > newDocHeight) {
+				newDocHeight = layers[k].bounds[3];
+			}
+		}
+		
+		app.activeDocument.resizeCanvas(layers[layers.length - 1].bounds[2], newDocHeight, AnchorPosition.TOPLEFT);
+		
+		// Ensure the end result is an even width and height value for retina/double-resolution displays
+		//
+		var widthAdjust = (app.activeDocument.width.value % 2 === 0) ? 0 : 1;
+		var heightAdjust = (app.activeDocument.height.value % 2 === 0) ? 0 : 1;
+		
+		if (widthAdjust === 1 || heightAdjust === 1) {
+			app.activeDocument.resizeCanvas(app.activeDocument.width + widthAdjust, app.activeDocument.height + heightAdjust, AnchorPosition.TOPLEFT);
+		}
+		
+		// Export and then revert history states
+		//
 		exportSprite();
 		revertHistory();
 	};
 	
-	// Build!
+	// Do stuff!
 	//
 	buildSprite();
