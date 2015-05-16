@@ -105,7 +105,7 @@
 			app.activeDocument.resizeCanvas(app.activeDocument.width + widthAdjust, app.activeDocument.height + heightAdjust, AnchorPosition.TOPLEFT);
 		}
 		
-		// Export and then revert history states
+		// Export, then revert history states
 		//
 		exportSprite();
 		revertHistory();
