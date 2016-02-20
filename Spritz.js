@@ -4,7 +4,7 @@
  * 
  * Generates sprite sheets from Photoshop layers
  * 
- * Copyright (c) 2015 Dan Zervoudakes
+ * Copyright (c) 2015, 2016 Dan Zervoudakes
  * Released under the MIT license
  * https://github.com/DanZiti/Spritz/blob/master/LICENSE
  * 
@@ -12,6 +12,8 @@
  * coordinates of each element within the sprite. To find specific sprite coordinates
  * for use within your style sheets, I kindly suggest www.spritecow.com - it's just awesome.
  */
+
+(function() {
 	
 	// The end result of this script will be a png image exported in the user's Desktop directory...
 	//
@@ -75,9 +77,7 @@
 			if (!translateLeft) {
 				app.activeLayer.translate(-app.activeLayer.bounds[0], -app.activeLayer.bounds[1]);
 				translateLeft = true;
-			}
-			
-			else {
+			} else {
 				app.activeLayer.translate(-app.activeLayer.bounds[0] + layers[j - 1].bounds[2], -app.activeLayer.bounds[1]);
 			}
 			
@@ -89,9 +89,7 @@
 		// Resize canvas to only cover the width/height necessary for the sprite
 		//
 		for (var k = 0; k < layers.length; k++) {
-			if (layers[k].bounds[3] > newDocHeight) {
-				newDocHeight = layers[k].bounds[3];
-			}
+			if (layers[k].bounds[3] > newDocHeight) newDocHeight = layers[k].bounds[3];
 		}
 		
 		app.activeDocument.resizeCanvas(layers[layers.length - 1].bounds[2], newDocHeight, AnchorPosition.TOPLEFT);
@@ -101,9 +99,7 @@
 		var widthAdjust = (app.activeDocument.width.value % 2 === 0) ? 0 : 1;
 		var heightAdjust = (app.activeDocument.height.value % 2 === 0) ? 0 : 1;
 		
-		if (widthAdjust === 1 || heightAdjust === 1) {
-			app.activeDocument.resizeCanvas(app.activeDocument.width + widthAdjust, app.activeDocument.height + heightAdjust, AnchorPosition.TOPLEFT);
-		}
+		if (widthAdjust === 1 || heightAdjust === 1) app.activeDocument.resizeCanvas(app.activeDocument.width + widthAdjust, app.activeDocument.height + heightAdjust, AnchorPosition.TOPLEFT);
 		
 		// Export, then revert history states
 		//
@@ -114,3 +110,5 @@
 	// Do stuff!
 	//
 	buildSprite();
+	
+})();
