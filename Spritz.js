@@ -1,12 +1,12 @@
 /**
  * Spritz
- * https://github.com/DanZiti/Spritz
+ * https://github.com/dzervoudakes/Spritz
  * 
  * Generates sprite sheets from Photoshop layers
  * 
  * Copyright (c) 2015, 2016 Dan Zervoudakes
  * Released under the MIT license
- * https://github.com/DanZiti/Spritz/blob/master/LICENSE
+ * https://github.com/dzervoudakes/Spritz/blob/master/LICENSE
  * 
  * NOTE: This script only exports simple sprite sheets and does not provide the
  * coordinates of each element within the sprite. To find specific sprite coordinates
