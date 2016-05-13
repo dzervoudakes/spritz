@@ -17,8 +17,8 @@
 	
 	// The end result of this script will be a png image exported in the user's Desktop directory...
 	var initialDoc = app.activeDocument;
-	var spriteGroup = app.activeDocument.layerSets.getByName("SPRITE").layers;
-	var saveFile = new File("~/Desktop/SPRITE.png");
+	var spriteGroup = app.activeDocument.layerSets.getByName('SPRITE').layers;
+	var saveFile = new File('~/Desktop/SPRITE.png');
 	var exportPNG = new PNGSaveOptions();
 		exportPNG.compression = 9;
 		exportPNG.interlaced = false;
@@ -47,7 +47,7 @@
 	function buildSprite() {
 		
 		// Create a new document called "SPRITE": collected sprite layers will be duplicated here...
-		var newDoc = app.documents.add(UnitValue(800, "px"), UnitValue(600, "px"), 72, "SPRITE", NewDocumentMode.RGB, DocumentFill.TRANSPARENT);
+		var newDoc = app.documents.add(UnitValue(800, 'px'), UnitValue(600, 'px'), 72, 'SPRITE', NewDocumentMode.RGB, DocumentFill.TRANSPARENT);
 		var layers = [];
 		var translateLeft = false;
 		var newDocHeight = 0;
