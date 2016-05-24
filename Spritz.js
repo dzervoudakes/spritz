@@ -86,8 +86,8 @@
 		app.activeDocument.resizeCanvas(layers[layers.length - 1].bounds[2], newDocHeight, AnchorPosition.TOPLEFT);
 		
 		// Ensure the end result is an even width and height value for retina/double-resolution displays
-		var widthAdjust = (app.activeDocument.width.value % 2 === 0) ? 0 : 1;
-		var heightAdjust = (app.activeDocument.height.value % 2 === 0) ? 0 : 1;
+		var widthAdjust = app.activeDocument.width.value % 2 === 0 ? 0 : 1;
+		var heightAdjust = app.activeDocument.height.value % 2 === 0 ? 0 : 1;
 		
 		if (widthAdjust === 1 || heightAdjust === 1) app.activeDocument.resizeCanvas(app.activeDocument.width + widthAdjust, app.activeDocument.height + heightAdjust, AnchorPosition.TOPLEFT);
 		
